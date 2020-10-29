@@ -528,7 +528,7 @@ class BreakPairServiceTests(ServiceBaseTest):
     def test31_novalidated_breakpair(self):
         """test break pair simple case:
         a) login
-        b) created NOT validated pàir
+        b) created NOT validated pair
         c) break pair
         """
         # create simple pair

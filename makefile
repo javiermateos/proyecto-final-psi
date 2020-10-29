@@ -12,7 +12,7 @@ HEROKU = heroku run export SQLITE=1 &
 run:
 	$(CMD) runserver
 
-reset_db: clear_db update_db create_user
+reset_db: clear_db update_db create_super_user
 
 clear_db:
 	@echo Clear Database
