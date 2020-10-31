@@ -9,7 +9,7 @@
 
 
 from django.core.management.base import BaseCommand
-from core.models import (
+from ..models import (
     OtherConstraints,
     Pair,
     Student,
@@ -36,6 +36,10 @@ class Command(BaseCommand):
     # is executed.
     help = """populate database
            """
+    teachers = list()
+    labgroups = list()
+    theorygroups = list()
+    students = list()
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -115,61 +119,82 @@ class Command(BaseCommand):
             {"first_name": "Pablo", "last_name": "Casado"},
             {"first_name": "Javier", "last_name": "Sanchez"},
             {"first_name": "Ines", "last_name": "Arrimadas"},
+            {"first_name": "Aitor", "last_name": "Esteban"},
+            {"first_name": "Gabriel", "last_name": "Rufian"},
         ]
 
         for t in teachersDict:
-            Teacher.objects.get_or_create(
+            element = Teacher.objects.get_or_create(
                 firs_name=t["firstname"], last_name=t["last_name"]
             )
+            element.save()
+            self.teachers.append(element)
 
     def labgroup(self):
         "add labgroups"
         labGoupsDict = [
             {
-                "teacher": "1",  # TODO: No estoy nada seguro del 1 , en caso de funcionar seria aplicable a pair
                 "groupName": "1261",
                 "language": "spanish",
                 "schedule": "9-11",
-                "maxNumberStudents": "20",
+                "maxNumberStudents": 20,
             },
             {
-                "teacher": "2",
                 "groupName": "1262",
                 "language": "spanish",
                 "schedule": "9-11",
-                "maxNumberStudents": "20",
+                "maxNumberStudents": 20,
             },
             {
-                "teacher": "3",
                 "groupName": "1263",
                 "language": "spanish",
                 "schedule": "9-11",
-                "maxNumberStudents": "20",
+                "maxNumberStudents": 20,
             },
             {
-                "teacher": "1",
                 "groupName": "1271",
                 "language": "spanish",
                 "schedule": "11-13",
-                "maxNumberStudents": "20",
+                "maxNumberStudents": 20,
             },
             {
-                "teacher": "2",
                 "groupName": "1272",
                 "language": "spanish",
                 "schedule": "11-13",
-                "maxNumberStudents": "20",
+                "maxNumberStudents": 20,
+            },
+            {
+                "groupName": "1201",
+                "language": "english",
+                "schedule": "11-13",
+                "maxNumberStudents": 20,
+            },
+            {
+                "groupName": "1291",
+                "language": "spanish",
+                "schedule": "11-13",
+                "maxNumberStudents": 20,
+            },
+            {
+                "groupName": "1292",
+                "language": "spanish",
+                "schedule": "11-13",
+                "maxNumberStudents": 20,
             },
         ]
 
+        i = 0
         for lg in labGoupsDict:
-            LabGroup.objects.get_or_create(
-                teacher=lg["teacher"],
+            element = LabGroup.objects.get_or_create(
+                teacher=self.teachers[i],
                 groupName=lg["groupName"],
                 language=lg["language"],
                 schedule=lg["schedule"],
                 maxNumberStudents=lg["maxNumberStudents"],
             )
+            element.save()
+            self.labgroups.append(element)
+            i += 1
 
     def theorygroup(self):
         "add theorygroups"
@@ -179,13 +204,14 @@ class Command(BaseCommand):
             {"groupName": "120", "language": "english"},
             {"groupName": "129", "language": "spanish"},
             {"groupName": "125", "language": "spanish"},
-            {"groupName": "126", "language": "spanish"},
         ]
 
         for tg in theoryGroupsDict:
-            TheoryGroup.objects.get_or_create(
+            element = TheoryGroup.objects.get_or_create(
                 groupName=tg["gropuName"], language=tg["language"]
             )
+            element.save()
+            self.theorygroups.append(element)
 
     def groupconstraints(self):
         "add group constrints"
@@ -198,28 +224,27 @@ class Command(BaseCommand):
             theoryGroup: 127, labGroup: 1272
             theoryGroup: 120, labGroup: 1201
             theoryGroup: 129, labGroup: 1291
-            theoryGroup: 125, labGroup: 1292"""
-        groupConstrainsts = [
-            {"theoryGroup": "126", "labGroup": "1261"},
-            {"theoryGroup": "126", "labGroup": "1262"},
-            {"theoryGroup": "126", "labGroup": "1263"},
-            {"theoryGroup": "127", "labGroup": "1271"},
-            {"theoryGroup": "127", "labGroup": "1272"},
-            {"theoryGroup": "120", "labGroup": "1201"},
-            {"theoryGroup": "129", "labGroup": "1291"},
-            {"theoryGroup": "125", "labGroup": "1292"},
-        ]
+            theoryGroup: 125, labGroup: 1252"""
 
-        for gc in groupConstrainsts:
-            GroupConstraints.objects.get_or_create(
-                theoryGroup=gc["theoryGroup"], labGroup=gc["labGroup"]
-            )
+        for tg in self.theorygroups:
+            for lg in self.labgroups:
+                if lg.get("groupName").startswith(tg.get("groupName")):
+                    element = GroupConstraints.objects.get_or_create(
+                        theoryGroup=tg, labGroup=lg
+                    )
+                    element.save()
+
 
     def pair(self):
         "create a few valid pairs"
-        # TODO: no tengo claro como añadirlos teniendo en cuenta que en el
-        # model aniade el objeto entero
-        pass
+        for i in range(2):
+            element = Pair.objects.get_or_create(
+                student1=self.students[i],
+                student2=self.students[-i],
+                validated=True
+            )
+            element.save()
+
 
     def otherconstrains(self):
         """create a single object here with staarting dates
@@ -242,11 +267,11 @@ class Command(BaseCommand):
 
         for s in new_students_dict:
             Student.objects.get_or_create(
-                NIE=s["NIE"],
-                DNI=s["DNI"],
-                lastName=s["Apellidos"],
-                firstName=s["Nombre"],
-                theoryGroup=s["grupo-teoria"],
+                username=s["NIE"],
+                password=s["DNI"],
+                last_name=s["Apellidos"],
+                first_name=s["Nombre"],
+                theoryGroup=self.theorygroups[self.theorygroups.index(s["grupo-teoria"])],
             )
 
     def studentgrade(self, cvsStudentFileGrades):
@@ -257,11 +282,11 @@ class Command(BaseCommand):
 
         for s in old_students_dict:
             Student.objects.get_or_create(
-                NIE=s["NIE"],
-                DNI=s["DNI"],
+                username=s["NIE"],
+                password=s["DNI"],
                 last_name=s["Apellidos"],
                 first_name=s["Nombre"],
-                theoryGroup=s["grupo-teoria"],
-                gradeTheoryLastYear=s["nota-teoria"],
-                gradeLabLastYear=s["nota-practicas"],
+                theoryGroup=self.theorygroups[self.theorygroups.index(s["grupo-teoria"])],
+                gradeTheoryLastYear=float(s["nota-teoria"]),
+                gradeLabLastYear=float(s["nota-practicas"]),
             )

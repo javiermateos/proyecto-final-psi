@@ -45,7 +45,7 @@ class LabGroup(models.Model):
     language = models.CharField(max_length=LANGUAGE_MAX_LENGTH)
     schedule = models.CharField(max_length=SCHEDULE_MAX_LENGTH)
     maxNumberStudents = models.IntegerField()
-    counter = models.IntegerField()
+    counter = models.IntegerField(default=0)
 
     class Meta:
         # Orden albético
@@ -62,7 +62,7 @@ class GroupConstraints(models.Model):
 
     class Meta:
         # Orden albético
-        ordering = [TheoryGroup.group_name, LabGroup.groupName]
+        ordering = [theoryGroup.group_name, labGroup.groupName]
 
     def __str__(self):
         return self.theoryGroup + " " + self.labGroup
@@ -72,8 +72,8 @@ class Student(User):
 
     labGroup = models.ForeignKey(LabGroup, on_delete=models.PROTECT)
     theoryGroup = models.ForeignKey(TheoryGroup, on_delete=models.PROTECT)
-    gradeTheoryLastYear = models.FloatField()
-    gradeLabLastYear = models.FloatField()
+    gradeTheoryLastYear = models.FloatField(blank=True)
+    gradeLabLastYear = models.FloatField(blank=True)
     convalidationGranted = models.BooleanField(default=False)
 
     class Meta:
