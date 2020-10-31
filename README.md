@@ -25,7 +25,7 @@ registrados de la aplicación.
 - 1º y 2º Semana:
     - [-] Creación de los modelos de datos (3.1). (Javier)
     - [-] Diagrama Entidad-Relacion del modelo de datos (5.1). (Javier)
-    - [ ] Creación del script populate.py y llenado de la base de datos (4.1). (Adrián)
+    - [-] Creación del script populate.py y llenado de la base de datos (4.1). (Adrián)
     - [ ] Comprobación del modelo de datos (4.3). (Adrián)
     - [ ] Pagina de administración (5.1). (Javier)
     - [ ] Creación del test "test_query.py" (5.2). (Javier)
