@@ -24,14 +24,14 @@ class TheoryGroup(models.Model):
     LANGUAGE_MAX_LENGTH = 128
 
     groupName = models.CharField(max_length=GROUP_NAME_MAX_LENGTH)
-    language = models.CharField(LANGUAGE_MAX_LENGTH)
+    language = models.CharField(max_length=LANGUAGE_MAX_LENGTH)
 
     class Meta:
         # Orden albético
-        ordering = ["group_name"]
+        ordering = ["groupName"]
 
     def __str__(self):
-        return self.group_name
+        return self.groupName
 
 
 class LabGroup(models.Model):
@@ -49,7 +49,7 @@ class LabGroup(models.Model):
 
     class Meta:
         # Orden albético
-        ordering = ["group_name"]
+        ordering = ["groupName"]
 
     def __str__(self):
         return self.groupName
@@ -60,42 +60,55 @@ class GroupConstraints(models.Model):
     theoryGroup = models.ForeignKey(TheoryGroup, on_delete=models.CASCADE)
     labGroup = models.ForeignKey(LabGroup, on_delete=models.CASCADE)
 
-    class Meta:
-        # Orden albético
-        ordering = [theoryGroup.group_name, labGroup.groupName]
+    class Meta():
+        ordering = ["labGroup"]
 
     def __str__(self):
-        return self.theoryGroup + " " + self.labGroup
+        return "{0} {1}".format(self.theoryGroup, self.labGroup)
 
 
 class Student(User):
 
-    labGroup = models.ForeignKey(LabGroup, on_delete=models.PROTECT)
-    theoryGroup = models.ForeignKey(TheoryGroup, on_delete=models.PROTECT)
-    gradeTheoryLastYear = models.FloatField(blank=True)
-    gradeLabLastYear = models.FloatField(blank=True)
+    labGroup = models.ForeignKey(LabGroup, on_delete=models.PROTECT, null=True)
+    theoryGroup = models.ForeignKey(
+        TheoryGroup,
+        on_delete=models.PROTECT,
+        null=True
+    )
+    gradeTheoryLastYear = models.FloatField(default=0.0)
+    gradeLabLastYear = models.FloatField(default=0.0)
     convalidationGranted = models.BooleanField(default=False)
 
     class Meta:
         ordering = ["last_name", "first_name"]
 
     def __str__(self):
-        return self.username
+        return self.last_name + " " + self.first_name
 
 
 class Pair(models.Model):
 
-    student1 = models.ForeignKey(Student, on_delete=models.PROTECT)
+    student1 = models.ForeignKey(
+        Student,
+        related_name="student1",
+        on_delete=models.PROTECT
+    )
     student2 = models.ForeignKey(
-        Student, on_delete=models.PROTECT, null=True, blank=True
+        Student, on_delete=models.PROTECT,
+        related_name="student2",
+        null=True, blank=True
     )
     studentBreakRequest = models.ForeignKey(
-        Student, on_delete=models.SET_NULL, null=True, blank=True
+        Student,
+        related_name="studentBreakRequest",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
     )
-    validated = models.Boolean(default=False)
+    validated = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.student1 + " " + self.student2
+        return "{0} {1}".format(self.student1, self.student2)
 
 
 class OtherConstraints(models.Model):
@@ -105,4 +118,8 @@ class OtherConstraints(models.Model):
     minGradeLabConv = models.FloatField()
 
     def __str__(self):
-        return self.selectGroupStartDate
+        return "{0} {1} {2}".format(
+            self.selectGroupStartDate,
+            self.minGradeTheoryConv,
+            self.minGradeLabConv
+        )

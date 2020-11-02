@@ -24,23 +24,23 @@ class ModelTests(TestCase):
         # load Command class from populate
         c = Command()
         # execute populate
-        c.handle(model='all', studentinfo='19-edat_psi.csv',
-                 studentinfolastyear='19-edat_2_psi.csv')
+        c.handle(model='all', studentinfo='19-edat.csv',
+                 studentinfolastyear='19-edat_2.csv')
 
     # TODO: ordering attribute need to be defined in meta
     # so the order in the query sets is always the same
     def iterate(self, _class, pklFileName, compareAtrbList):
-        if _class == Student:
-            dataBaseModelQS = Student.objects.filter(id__gt=1)
-        else:
-            dataBaseModelQS = _class.objects.all()
+        # if _class == Student:
+        #     dataBaseModelQS = Student.objects.filter(id__gt=1)
+        # else:
+        dataBaseModelQS = _class.objects.all()
         pklFileName = join(pathToProject, pklFileName)
         modelQS = pickle.load(open(pklFileName, "rb"))
         self.assertEqual(len(dataBaseModelQS), len(modelQS),
                          "Error: wrong number of %s" % str(_class))
         counter=1
         for t1, t2 in zip(dataBaseModelQS, modelQS):
-            print(counter, t1,t2)
+            print(counter, t1, t2)
             for attrb in compareAtrbList:
                 self.assertEqual(getattr(t1, attrb), getattr(t2, attrb),
                                  "Error: different %s" % attrb)
