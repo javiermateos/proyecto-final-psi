@@ -11,7 +11,6 @@ class Teacher(models.Model):
     last_name = models.CharField(max_length=LAST_NAME_MAX_LENGTH)
 
     class Meta:
-        # Orden alfabético
         ordering = ["last_name", "first_name"]
 
     def __str__(self):
@@ -27,7 +26,6 @@ class TheoryGroup(models.Model):
     language = models.CharField(max_length=LANGUAGE_MAX_LENGTH)
 
     class Meta:
-        # Orden albético
         ordering = ["groupName"]
 
     def __str__(self):
@@ -40,7 +38,7 @@ class LabGroup(models.Model):
     LANGUAGE_MAX_LENGTH = 128
     SCHEDULE_MAX_LENGTH = 128
 
-    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+    teacher = models.ForeignKey(Teacher, on_delete=models.PROTECT)
     groupName = models.CharField(max_length=GROUP_NAME_MAX_LENGTH)
     language = models.CharField(max_length=LANGUAGE_MAX_LENGTH)
     schedule = models.CharField(max_length=SCHEDULE_MAX_LENGTH)
@@ -48,7 +46,6 @@ class LabGroup(models.Model):
     counter = models.IntegerField(default=0)
 
     class Meta:
-        # Orden albético
         ordering = ["groupName"]
 
     def __str__(self):
@@ -60,8 +57,8 @@ class GroupConstraints(models.Model):
     theoryGroup = models.ForeignKey(TheoryGroup, on_delete=models.CASCADE)
     labGroup = models.ForeignKey(LabGroup, on_delete=models.CASCADE)
 
-    class Meta():
-        ordering = ["labGroup"]
+    class Meta:
+        ordering = ["labGroup", "theoryGroup"]
 
     def __str__(self):
         return "{0} {1}".format(self.theoryGroup, self.labGroup)
@@ -69,12 +66,10 @@ class GroupConstraints(models.Model):
 
 class Student(User):
 
+    theoryGroup = models.ForeignKey(TheoryGroup,
+                                    on_delete=models.PROTECT,
+                                    null=True)
     labGroup = models.ForeignKey(LabGroup, on_delete=models.PROTECT, null=True)
-    theoryGroup = models.ForeignKey(
-        TheoryGroup,
-        on_delete=models.PROTECT,
-        null=True
-    )
     gradeTheoryLastYear = models.FloatField(default=0.0)
     gradeLabLastYear = models.FloatField(default=0.0)
     convalidationGranted = models.BooleanField(default=False)
@@ -83,27 +78,22 @@ class Student(User):
         ordering = ["last_name", "first_name"]
 
     def __str__(self):
-        return self.last_name + " " + self.first_name
+        return "{0} {1}".format(self.last_name, self.first_name)
 
 
 class Pair(models.Model):
-
-    student1 = models.ForeignKey(
-        Student,
-        related_name="student1",
-        on_delete=models.PROTECT
-    )
-    student2 = models.ForeignKey(
-        Student, on_delete=models.PROTECT,
-        related_name="student2",
-        null=True, blank=True
-    )
+    student1 = models.ForeignKey(Student,
+                                 related_name="student1",
+                                 on_delete=models.PROTECT)
+    student2 = models.ForeignKey(Student,
+                                 related_name="student2",
+                                 on_delete=models.PROTECT,
+                                 null=True)
     studentBreakRequest = models.ForeignKey(
         Student,
         related_name="studentBreakRequest",
         on_delete=models.SET_NULL,
         null=True,
-        blank=True
     )
     validated = models.BooleanField(default=False)
 
@@ -121,5 +111,5 @@ class OtherConstraints(models.Model):
         return "{0} {1} {2}".format(
             self.selectGroupStartDate,
             self.minGradeTheoryConv,
-            self.minGradeLabConv
+            self.minGradeLabConv,
         )

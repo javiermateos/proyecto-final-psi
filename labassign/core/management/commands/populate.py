@@ -7,23 +7,20 @@
 #
 # execute python manage.py  populate
 
+import csv
+from datetime import datetime, timedelta
 
-from django.core.management.base import BaseCommand
-from django.utils.timezone import make_aware
-from ...models import (
+from core.models import (
+    GroupConstraints,
+    LabGroup,
     OtherConstraints,
     Pair,
     Student,
-    GroupConstraints,
-    TheoryGroup,
-    LabGroup,
     Teacher,
+    TheoryGroup,
 )
-
-from datetime import datetime, timedelta
-
-import csv
-from collections import OrderedDict
+from django.core.management.base import BaseCommand
+from django.utils.timezone import make_aware
 
 
 # The name of this class is not optional must be Command
@@ -100,247 +97,302 @@ class Command(BaseCommand):
     def cleanDataBase(self):
         # delete all models stored (clean table)
         # in database
-        Teacher.objects.all().delete
-        LabGroup.objects.all().delete
-        TheoryGroup.objects.all().delete
-        LabGroup.objects.all().delete
-        GroupConstraints.objects.all().delete
-        Student.objects.all().delete
-        Pair.objects.all().delete
+        GroupConstraints.objects.all().delete()
+        Pair.objects.all().delete()
+        Student.objects.all().delete()
+        LabGroup.objects.all().delete()
+        TheoryGroup.objects.all().delete()
+        Teacher.objects.all().delete()
 
     def teacher(self):
         "create teachers here"
-        teachersDict = [
-            {"first_name": "No", "last_name": "Asignado1"},
-            {"first_name": "No", "last_name": "Asignado4"},
-            {"first_name": "Julia", "last_name": "Diaz Garcia"},
-            {"first_name": "Alvaro", "last_name": "del Val Latorre"},
-            {"first_name": "Roberto", "last_name": "Marabini Ruiz"},
-        ]
+        teacherD = dict()
+        teacherD[1] = {
+            "id": 1,  # 1261, L 18:00, 1271 X 18-20
+            "first_name": "No",
+            "last_name": "Asignado1",
+        }
+        teacherD[2] = {
+            "id": 2,  # 1262 X 18-20, 1263/1273 V 17-19
+            "first_name": "No",
+            "last_name": "Asignado4",
+        }
+        teacherD[3] = {
+            "id": 3,  # 1272 V 17-19, 1291 L 18-20
+            "first_name": "Julia",
+            "last_name": "Diaz Garcia",
+        }
+        teacherD[4] = {
+            "id": 4,  # 1292/1251V 17:00
+            "first_name": "Alvaro",
+            "last_name": "del Val Latorre",
+        }
+        teacherD[5] = {
+            "id": 5,  # 1201 X 18:00
+            "first_name": "Roberto",
+            "last_name": "Marabini Ruiz",
+        }
 
-        for t in teachersDict:
-            element = Teacher.objects.get_or_create(
-                first_name=t["first_name"], last_name=t["last_name"]
-            )[0]
-            element.save()
+        for t in teacherD.values():
+            Teacher.objects.get_or_create(
+                id=t["id"], first_name=t["first_name"], last_name=t["last_name"]
+            )
 
     def labgroup(self):
         "add labgroups"
-        labGroupsDict = [
-            {
-                "id": 1261,
-                "teacher": Teacher.objects.get(
-                    first_name="No", last_name="Asignado1"),
-                "groupName": "1261",
-                "language": "español/Spanish",
-                "schedule": "Lunes/Monday 18-20",
-                "maxNumberStudents": 23,
-            },
-            {
-                "id": 1262,
-                "teacher": Teacher.objects.get(
-                    first_name="No", last_name="Asignado4"),
-                "groupName": "1262",
-                "language": "español/Spanish",
-                "schedule": "Miércoles/Wednesday 18-20",
-                "maxNumberStudents": 23,
-            },
-            {
-                "id": 1263,
-                "teacher": Teacher.objects.get(
-                    first_name="No", last_name="Asignado4"),
-                "groupName": "1263",
-                "language": "español/Spanish",
-                "schedule": "Viernes/Friday 17-19",
-                "maxNumberStudents": 23,
-            },
-            {
-                "id": 1271,
-                "teacher": Teacher.objects.get(
-                    first_name="No", last_name="Asignado1"),
-                "groupName": "1271",
-                "language": "español/Spanish",
-                "schedule": "Miércoles/Wednesday 18-20",
-                "maxNumberStudents": 23,
-            },
-            {
-                "id": 1272,
-                "teacher": Teacher.objects.get(
-                    first_name="Julia", last_name="Diaz Garcia"),
-                "groupName": "1272",
-                "language": "español/Spanish",
-                "schedule": "Viernes/Friday 17-19",
-                "maxNumberStudents": 23,
-            },
-            {
-                "id": 1201,
-                "teacher": Teacher.objects.get(
-                    first_name="Roberto", last_name="Marabini Ruiz"),
-                "groupName": "1201",
-                "language": "español/Spanish",
-                "schedule": "Miércoles/Wednesday 18-20",
-                "maxNumberStudents": 23,
-            },
-            {
-                "id": 1291,
-                "teacher": Teacher.objects.get(
-                    first_name="Julia", last_name="Diaz Garcia"),
-                "groupName": "1291",
-                "language": "inglés/English",
-                "schedule": "Lunes/Monday 18-20",
-                "maxNumberStudents": 23,
-            },
-            {
-                "id": 1292,
-                "teacher": Teacher.objects.get(
-                    first_name="Alvaro", last_name="del Val Latorre"),
-                "groupName": "1292",
-                "language": "inglés/English",
-                "schedule": "Viernes/Friday 17-19",
-                "maxNumberStudents": 23,
-            },
-        ]
+        maxNumberStudents = 23
+        labgroupD = dict()
+        labgroupD[1261] = {
+            "id": 1261,  # 1261, L 18:00, 1271 X 18-20
+            "groupName": "1261",
+            "teacher": 1,
+            "schedule": "Lunes/Monday 18-20",
+            "language": "español/Spanish",
+            "maxNumberStudents": maxNumberStudents,
+        }
+        labgroupD[1262] = {
+            "id": 1262,  # 1261, L 18:00, 1271 X 18-20
+            "teacher": 2,
+            "groupName": "1262",
+            "schedule": "Miércoles/Wednesday 18-20",
+            "language": "español/Spanish",
+            "maxNumberStudents": maxNumberStudents,
+        }
+        labgroupD[1263] = {
+            "id": 1263,  # 1261, L 18:00, 1271 X 18-20
+            "teacher": 2,
+            "groupName": "1263",
+            "schedule": "Viernes/Friday 17-19",
+            "language": "español/Spanish",
+            "maxNumberStudents": maxNumberStudents,
+        }
+        labgroupD[1271] = {
+            "id": 1271,  # 1261, L 18:00, 1271 X 18-20
+            "teacher": 1,
+            "groupName": "1271",
+            "schedule": "Miércoles/Wednesday 18-20",
+            "language": "español/Spanish",
+            "maxNumberStudents": maxNumberStudents,
+        }
+        labgroupD[1272] = {
+            "id": 1272,  # 1261, L 18:00, 1271 X 18-20
+            "teacher": 3,
+            "groupName": "1272",
+            "schedule": "Viernes/Friday 17-19",
+            "language": "español/Spanish",
+            "maxNumberStudents": maxNumberStudents,
+        }
+        labgroupD[1291] = {
+            "id": 1291,  # 1261, L 18:00, 1271 X 18-20
+            "teacher": 3,
+            "groupName": "1291",
+            "schedule": "Lunes/Monday 18-20",
+            "language": "inglés/English",
+            "maxNumberStudents": maxNumberStudents,
+        }
+        labgroupD[1292] = {
+            "id": 1292,
+            "teacher": 4,
+            "groupName": "1292",
+            "schedule": "Viernes/Friday 17-19",
+            "language": "inglés/English",
+            "maxNumberStudents": maxNumberStudents,
+        }
+        labgroupD[1201] = {
+            "id": 1201,
+            "teacher": 5,
+            "groupName": "1201",
+            "schedule": "Miércoles/Wednesday 18-20",
+            "language": "español/Spanish",
+            "maxNumberStudents": maxNumberStudents,
+        }
 
-        for lg in labGroupsDict:
-            element = LabGroup.objects.get_or_create(
+        for lg in labgroupD.values():
+            LabGroup.objects.get_or_create(
                 id=lg["id"],
-                teacher=lg["teacher"],
+                teacher=Teacher.objects.get(id=lg["teacher"]),
                 groupName=lg["groupName"],
                 language=lg["language"],
                 schedule=lg["schedule"],
                 maxNumberStudents=lg["maxNumberStudents"],
-            )[0]
-            element.save()
+            )
 
     def theorygroup(self):
         "add theorygroups"
-        theoryGroupsDict = [
-            {"id": 126, "groupName": "126", "language": "español/Spanish"},
-            {"id": 127, "groupName": "127", "language": "español/Spanish"},
-            {"id": 120, "groupName": "120", "language": "español/Spanish"},
-            {"id": 129, "groupName": "129", "language": "inglés/English"},
-            {"id": 125, "groupName": "125", "language": "inglés/English"},
-        ]
+        theorygroupD = dict()
+        theorygroupD[126] = {
+            "id": 126,
+            "groupName": "126",
+            "language": "español/Spanish",
+        }
+        theorygroupD[127] = {
+            "id": 127,  # 127/120
+            "groupName": "127",
+            "language": "español/Spanish",
+        }
+        theorygroupD[129] = {
+            "id": 129,  # 129/125
+            "groupName": "129",
+            "language": "inglés/English",
+        }
+        theorygroupD[120] = {
+            "id": 120,  # 127/120
+            "groupName": "120",
+            "language": "español/Spanish",
+        }
+        theorygroupD[125] = {
+            "id": 125,  # 129/125
+            "groupName": "125",
+            "language": "inglés/English",
+        }
 
-        for tg in theoryGroupsDict:
-            element = TheoryGroup.objects.get_or_create(
+        for tg in theorygroupD.values():
+            TheoryGroup.objects.get_or_create(
                 id=tg["id"], groupName=tg["groupName"], language=tg["language"]
-            )[0]
-            element.save()
+            )
 
     def groupconstraints(self):
         "add group constrints"
         """
         Follows which laboratory groups (4th column
-            may be choosen by which theory groups (2nd column)
-            theoryGroup: 126, labGroup: 1261
-            theoryGroup: 126, labGroup: 1262
-            theoryGroup: 126, labGroup: 1263
-            theoryGroup: 127, labGroup: 1271
-            theoryGroup: 127, labGroup: 1272
-            theoryGroup: 120, labGroup: 1201
-            theoryGroup: 129, labGroup: 1291
-            theoryGroup: 125, labGroup: 1292
+        may be choosen by which theory groups (2nd column)
+        theoryGroup: 126, labGroup: 1261
+        theoryGroup: 126, labGroup: 1262
+        theoryGroup: 126, labGroup: 1263
+        theoryGroup: 127, labGroup: 1271
+        theoryGroup: 127, labGroup: 1272
+        theoryGroup: 120, labGroup: 1201
+        theoryGroup: 129, labGroup: 1291
+        theoryGroup: 125, labGroup: 1292
         """
+        groupconstraintsD = dict()
+        groupconstraintsD[1261] = {
+            "theoryGroup": 126,
+            "labGroup": 1261,
+        }  # mañana
+        groupconstraintsD[1262] = {
+            "theoryGroup": 126,
+            "labGroup": 1262,
+        }  # mañana
+        groupconstraintsD[1263] = {
+            "theoryGroup": 126,
+            "labGroup": 1263,
+        }  # mañana
+        # tarde, split ii and doble
+        groupconstraintsD[1271] = {
+            "theoryGroup": 127,
+            "labGroup": 1271,
+        }  # tarde - no doble
+        groupconstraintsD[1272] = {
+            "theoryGroup": 127,
+            "labGroup": 1272,
+        }  # tarde - no doble
+        groupconstraintsD[1201] = {
+            "theoryGroup": 120,
+            "labGroup": 1201,
+        }  # doble - tarde - español - WEds
+        # english
+        groupconstraintsD[1291] = {
+            "theoryGroup": 129,
+            "labGroup": 1291,
+        }  # inglés - ii - tarde Friday
+        groupconstraintsD[1292] = {
+            "theoryGroup": 125,
+            "labGroup": 1292,
+        }  # inglés - doble
 
-        groupConstraintsDict = [
-            {"theoryGroup": TheoryGroup.objects.get(groupName="120"),
-             "labGroup": LabGroup.objects.get(groupName="1201")},
-            {"theoryGroup": TheoryGroup.objects.get(groupName="126"),
-             "labGroup": LabGroup.objects.get(groupName="1261")},
-            {"theoryGroup": TheoryGroup.objects.get(groupName="126"),
-             "labGroup": LabGroup.objects.get(groupName="1262")},
-            {"theoryGroup": TheoryGroup.objects.get(groupName="126"),
-             "labGroup": LabGroup.objects.get(groupName="1263")},
-            {"theoryGroup": TheoryGroup.objects.get(groupName="127"),
-             "labGroup": LabGroup.objects.get(groupName="1271")},
-            {"theoryGroup": TheoryGroup.objects.get(groupName="127"),
-             "labGroup": LabGroup.objects.get(groupName="1272")},
-            {"theoryGroup": TheoryGroup.objects.get(groupName="129"),
-             "labGroup": LabGroup.objects.get(groupName="1291")},
-            {"theoryGroup": TheoryGroup.objects.get(groupName="125"),
-             "labGroup": LabGroup.objects.get(groupName="1292")},
-        ]
-
-        for gc in groupConstraintsDict:
-            element = GroupConstraints.objects.get_or_create(
-                theoryGroup=gc["theoryGroup"], labGroup=gc["labGroup"]
-            )[0]
-            element.save()
+        for gc in groupconstraintsD.values():
+            GroupConstraints.objects.get_or_create(
+                theoryGroup=TheoryGroup.objects.get(
+                    groupName=gc["theoryGroup"]
+                ),
+                labGroup=LabGroup.objects.get(groupName=gc["labGroup"]),
+            )
 
     def pair(self):
         "create a few valid pairs"
+        pairD = dict()
+        pairD[464353] = {
+            "student1": "464353",
+            "student2": "460168",
+            "validated": True,
+        }
+        pairD[499264] = {
+            "student1": "499264",
+            "student2": "470075",
+            "validated": True,
+        }
+        pairD[401402] = {
+            "student1": "401402",
+            "student2": "421455",
+            "validated": True,
+        }
+        pairD[430127] = {
+            "student1": "430127",
+            "student2": "422408",
+            "validated": True,
+        }
+        pairD[490948] = {
+            "student1": "490948",
+            "student2": "437663",
+            "validated": True,
+        }
 
-        pairD = OrderedDict()
-        pairD[1000] = {'student2': 1100, 'validated': False}
-        pairD[1001] = {'student2': 1101, 'validated': False}
-        pairD[1010] = {'student2': 1110, 'validated': True}
-        pairD[1011] = {'student2': 1111, 'validated': True}
-        pairD[1012] = {'student2': 1112, 'validated': True}
-
-        for p in pairD.keys():
-            element = Pair.objects.get_or_create(
-                student1=Student.objects.get(id=p),
-                student2=Student.objects.get(id=pairD.get(p)["student2"]),
-                validated=pairD.get(p)["validated"]
-            )[0]
-            element.save()
+        for p in pairD.values():
+            Pair.objects.get_or_create(
+                student1=Student.objects.get(username=p["student1"]),
+                student2=Student.objects.get(username=p["student2"]),
+                validated=p["validated"],
+            )
 
     def otherconstrains(self):
-        """create a single object here with staarting dates
+        """create a single object here with starting dates
         and maximum and minimum convalidation grades"""
         """ Use the following values:
         selectGroupStartDate = now + 1 day,
         minGradeTheoryConv = 3,
         minGradeLabConv = 7
         """
-        element = OtherConstraints.objects.get_or_create(
-            selectGroupStartDate=make_aware(
-                datetime.now() + timedelta(days=1)),
+        OtherConstraints.objects.get_or_create(
+            selectGroupStartDate=make_aware(datetime.now() + timedelta(days=1)),
             minGradeTheoryConv=3,
             minGradeLabConv=7,
-        )[0]
-        element.save()
+        )
 
     def student(self, csvStudentFile):
-        # structure NIE	DNI	Apellidos Nombre group-Teoría
+        # read csv file
+        # structure NIE DNI Apellidos Nombre group-Teoría
         with open(csvStudentFile) as csv_file:
-            new_students_dict = csv.DictReader(csv_file)
-            counter = 1000
-            for s in new_students_dict:
-                element = Student.objects.get_or_create(
-                    id=counter,
-                    username=s["NIE"],
-                    password=s["DNI"],
-                    last_name=s["Apellidos"],
-                    first_name=s["Nombre"],
+            studentsD = csv.DictReader(csv_file)
+            for s in studentsD:
+                Student.objects.get_or_create(
+                    username=s["NIE"].strip(),
+                    password=s["DNI"].strip(),
+                    last_name=s["Apellidos"].strip(),
+                    first_name=s["Nombre"].strip(),
                     theoryGroup=TheoryGroup.objects.get(
-                        groupName=s["grupo-teoria"]
+                        groupName=s["grupo-teoria"].strip()
                     ),
-                )[0]
-                element.save()
-                counter += 1
-            print(counter)
+                )
 
     def studentgrade(self, csvStudentFileGrades):
         # read csv file
-        # structure NIE	DNI	Apellidos	Nombre	group-Teoría	grade-practicas
+        # structure NIE DNI Apellidos Nombre group-Teoría grade-practicas
         # gradeteoria
         with open(csvStudentFileGrades) as csv_file:
-            old_students_dict = csv.DictReader(csv_file)
-            for s in old_students_dict:
+            studentsD = csv.DictReader(csv_file)
+            for s in studentsD:
                 defaults = {
-                    "gradeTheoryLastYear": float(s["nota-teoria"]),
-                    "gradeLabLastYear": float(s["nota-practicas"])
+                    "gradeTheoryLastYear": float(s["nota-teoria"].strip()),
+                    "gradeLabLastYear": float(s["nota-practicas"].strip()),
                 }
-                element = Student.objects.update_or_create(
-                    username=s["NIE"],
-                    password=s["DNI"],
-                    last_name=s["Apellidos"],
-                    first_name=s["Nombre"],
+                Student.objects.update_or_create(
+                    username=s["NIE"].strip(),
+                    password=s["DNI"].strip(),
+                    last_name=s["Apellidos"].strip(),
+                    first_name=s["Nombre"].strip(),
                     theoryGroup=TheoryGroup.objects.get(
-                        groupName=s["grupo-teoria"]
+                        groupName=s["grupo-teoria"].strip()
                     ),
-                    defaults=defaults
-                )[0]
-                element.save()
+                    defaults=defaults,
+                )
