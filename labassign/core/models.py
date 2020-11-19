@@ -69,7 +69,10 @@ class Student(User):
     theoryGroup = models.ForeignKey(TheoryGroup,
                                     on_delete=models.PROTECT,
                                     null=True)
-    labGroup = models.ForeignKey(LabGroup, on_delete=models.PROTECT, null=True)
+    labGroup = models.ForeignKey(LabGroup,
+                                 on_delete=models.PROTECT,
+                                 null=True,
+                                 blank=True)
     gradeTheoryLastYear = models.FloatField(default=0.0)
     gradeLabLastYear = models.FloatField(default=0.0)
     convalidationGranted = models.BooleanField(default=False)
@@ -82,6 +85,7 @@ class Student(User):
 
 
 class Pair(models.Model):
+
     student1 = models.ForeignKey(Student,
                                  related_name="student1",
                                  on_delete=models.PROTECT)
@@ -97,6 +101,9 @@ class Pair(models.Model):
     )
     validated = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ["student1", "student2"]
+
     def __str__(self):
         return "{0} {1}".format(self.student1, self.student2)
 
@@ -104,8 +111,8 @@ class Pair(models.Model):
 class OtherConstraints(models.Model):
 
     selectGroupStartDate = models.DateTimeField()
-    minGradeTheoryConv = models.FloatField()
-    minGradeLabConv = models.FloatField()
+    minGradeTheoryConv = models.FloatField(null=True)
+    minGradeLabConv = models.FloatField(null=True)
 
     def __str__(self):
         return "{0} {1} {2}".format(

@@ -8,7 +8,7 @@
 # execute python manage.py  populate
 
 import csv
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from core.models import (
     GroupConstraints,
@@ -20,7 +20,9 @@ from core.models import (
     TheoryGroup,
 )
 from django.core.management.base import BaseCommand
-from django.utils.timezone import make_aware
+from django.utils import timezone
+from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.hashers import make_password
 
 
 # The name of this class is not optional must be Command
@@ -134,9 +136,9 @@ class Command(BaseCommand):
         }
 
         for t in teacherD.values():
-            Teacher.objects.get_or_create(
-                id=t["id"], first_name=t["first_name"], last_name=t["last_name"]
-            )
+            Teacher.objects.get_or_create(id=t["id"],
+                                          first_name=t["first_name"],
+                                          last_name=t["last_name"])
 
     def labgroup(self):
         "add labgroups"
@@ -247,9 +249,9 @@ class Command(BaseCommand):
         }
 
         for tg in theorygroupD.values():
-            TheoryGroup.objects.get_or_create(
-                id=tg["id"], groupName=tg["groupName"], language=tg["language"]
-            )
+            TheoryGroup.objects.get_or_create(id=tg["id"],
+                                              groupName=tg["groupName"],
+                                              language=tg["language"])
 
     def groupconstraints(self):
         "add group constrints"
@@ -304,45 +306,24 @@ class Command(BaseCommand):
         for gc in groupconstraintsD.values():
             GroupConstraints.objects.get_or_create(
                 theoryGroup=TheoryGroup.objects.get(
-                    groupName=gc["theoryGroup"]
-                ),
+                    groupName=gc["theoryGroup"]),
                 labGroup=LabGroup.objects.get(groupName=gc["labGroup"]),
             )
 
     def pair(self):
         "create a few valid pairs"
         pairD = dict()
-        pairD[464353] = {
-            "student1": "464353",
-            "student2": "460168",
-            "validated": True,
-        }
-        pairD[499264] = {
-            "student1": "499264",
-            "student2": "470075",
-            "validated": True,
-        }
-        pairD[401402] = {
-            "student1": "401402",
-            "student2": "421455",
-            "validated": True,
-        }
-        pairD[430127] = {
-            "student1": "430127",
-            "student2": "422408",
-            "validated": True,
-        }
-        pairD[490948] = {
-            "student1": "490948",
-            "student2": "437663",
-            "validated": True,
-        }
+        pairD[1000] = {'student2': 1100, 'validated': False}
+        pairD[1001] = {'student2': 1101, 'validated': False}
+        pairD[1010] = {'student2': 1110, 'validated': True}
+        pairD[1011] = {'student2': 1111, 'validated': True}
+        pairD[1012] = {'student2': 1112, 'validated': True}
 
-        for p in pairD.values():
+        for k, v in pairD.items():
             Pair.objects.get_or_create(
-                student1=Student.objects.get(username=p["student1"]),
-                student2=Student.objects.get(username=p["student2"]),
-                validated=p["validated"],
+                student1=Student.objects.get(id=k),
+                student2=Student.objects.get(id=v["student2"]),
+                validated=v["validated"],
             )
 
     def otherconstrains(self):
@@ -354,7 +335,7 @@ class Command(BaseCommand):
         minGradeLabConv = 7
         """
         OtherConstraints.objects.get_or_create(
-            selectGroupStartDate=make_aware(datetime.now() + timedelta(days=1)),
+            selectGroupStartDate=timezone.now() + timedelta(days=1),
             minGradeTheoryConv=3,
             minGradeLabConv=7,
         )
@@ -364,16 +345,18 @@ class Command(BaseCommand):
         # structure NIE DNI Apellidos Nombre group-Teoría
         with open(csvStudentFile) as csv_file:
             studentsD = csv.DictReader(csv_file)
+            counter = 1000
             for s in studentsD:
                 Student.objects.get_or_create(
+                    id=counter,
                     username=s["NIE"].strip(),
-                    password=s["DNI"].strip(),
+                    password=make_password(s["DNI"].strip()),
                     last_name=s["Apellidos"].strip(),
                     first_name=s["Nombre"].strip(),
                     theoryGroup=TheoryGroup.objects.get(
-                        groupName=s["grupo-teoria"].strip()
-                    ),
+                        groupName=s["grupo-teoria"].strip()),
                 )
+                counter += 1
 
     def studentgrade(self, csvStudentFileGrades):
         # read csv file
@@ -382,17 +365,13 @@ class Command(BaseCommand):
         with open(csvStudentFileGrades) as csv_file:
             studentsD = csv.DictReader(csv_file)
             for s in studentsD:
-                defaults = {
-                    "gradeTheoryLastYear": float(s["nota-teoria"].strip()),
-                    "gradeLabLastYear": float(s["nota-practicas"].strip()),
-                }
-                Student.objects.update_or_create(
-                    username=s["NIE"].strip(),
-                    password=s["DNI"].strip(),
-                    last_name=s["Apellidos"].strip(),
-                    first_name=s["Nombre"].strip(),
-                    theoryGroup=TheoryGroup.objects.get(
-                        groupName=s["grupo-teoria"].strip()
-                    ),
-                    defaults=defaults,
-                )
+                NIE = s["NIE"].strip()
+                gradeTheoryLastYear = float(s["nota-teoria"].strip())
+                gradeLabLastYear = float(s["nota-practicas"].strip())
+                try:
+                    Student.objects.filter(username=NIE).update(
+                        gradeLabLastYear=gradeLabLastYear,
+                        gradeTheoryLastYear=gradeTheoryLastYear,
+                    )
+                except ObjectDoesNotExist:
+                    print("Grade for non existing users.")

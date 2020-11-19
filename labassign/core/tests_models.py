@@ -41,10 +41,10 @@ class ModelTests(TestCase):
     # TODO: ordering attribute need to be defined in meta
     # so the order in the query sets is always the same
     def iterate(self, _class, pklFileName, compareAtrbList):
-        # if _class == Student:
-        #     dataBaseModelQS = Student.objects.filter(id__gt=1)
-        # else:
-        dataBaseModelQS = _class.objects.all()
+        if _class == Student:
+            dataBaseModelQS = Student.objects.filter(id__gt=1)
+        else:
+            dataBaseModelQS = _class.objects.all()
         pklFileName = join(pathToProject, pklFileName)
         modelQS = pickle.load(open(pklFileName, "rb"))
         self.assertEqual(
