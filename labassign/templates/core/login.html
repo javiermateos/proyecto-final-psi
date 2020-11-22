@@ -1,0 +1,35 @@
+{% extends 'core/base.html' %}
+
+{% block title_block %}
+    Login
+{% endblock title_block %}
+
+{% block main_block %}
+<article>
+    <h1>Login</h1>
+    {% if err == "User already authenticated" %}
+    <section>
+        <h3>Hi {{ user.first_name }}{{ user.last_name }}, you are already logged in.</h3>
+        <span> Log out if you want to login as another user. </span>
+    </section>
+    {% else %}
+    {% if err == "Invalid credentials" %}
+    <section>
+        <h3>Your username and password didn't match.</h3>
+        <p>
+            Please try again.
+            Note that both fields may be case-sensitive.
+        </p>
+    </section>
+    {% endif %}
+    <form id="login_form" method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+        Username: <input type="text" name="username" value="" size="50" />
+        <br />
+        Password: <input type="password" name="password" value="" size="50" />
+        <br />
+        <input type="submit" value="submit" />
+    </form>
+    {% endif %}
+</article>
+{% endblock main_block %}

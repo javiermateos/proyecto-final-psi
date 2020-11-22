@@ -16,6 +16,22 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from core import views
+
 urlpatterns = [
+    path('', views.home, name='home'),
+    path('index/', views.home, name='index'),
+    path('login/', views.user_login, name='login'),
+    path('logout/', views.user_logout, name='logout'),
+    path('login_help/', views.login_help, name='login_help'),
+    path('convalidation/', views.convalidation, name='convalidation'),
+    path('convalidation_help/',
+         views.convalidation_help,
+         name='convalidation_help'),
+    path('apply_pair/', views.apply_pair, name='apply_pair'),
+    path('applypair_help/', views.applypair_help, name='applypair_help'),
+    path('apply_group/', views.apply_group, name='apply_group'),
+    path('applygroup_help/', views.applygroup_help, name='applygroup_help'),
+    path('break_pair/', views.break_pair, name='break_pair'),
     path('admin/', admin.site.urls),
 ]
