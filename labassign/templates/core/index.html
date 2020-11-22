@@ -7,7 +7,7 @@
 {% block main_block %}
 <article>
     {% if user.is_authenticated %}
-    <h1>Summary page for {{ user.first_name }} {{ user.last_name }}</h1>
+    <h1>Summary page for <b>{{ user.first_name }} {{ user.last_name }}</b></h1>
     <span>(Your theory group is {{ student.theoryGroup }})</span>
     <section>
         <h2>Convalidation</h2>
@@ -25,7 +25,7 @@
     <section>
         <h2>Pair Status</h2>
         {% if pair %}
-        <span>You are part of the following pair</span>
+        <span>You are part of the following pair:</span>
         <ul>
             <li>{{ pair.student1 }}</li>
             <li>{{ pair.student2 }}</li>
