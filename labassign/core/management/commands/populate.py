@@ -313,7 +313,7 @@ class Command(BaseCommand):
     def pair(self):
         "create a few valid pairs"
         pairD = dict()
-        pairD[1000] = {'student2': 1100, 'validated': False}
+        pairD[1000] = {'student2': 1100, 'validated': True}
         pairD[1001] = {'student2': 1101, 'validated': False}
         pairD[1010] = {'student2': 1110, 'validated': True}
         pairD[1011] = {'student2': 1111, 'validated': True}

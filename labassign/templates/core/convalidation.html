@@ -5,4 +5,19 @@
 {% endblock title_block %}
 
 {% block main_block %}
+<article>
+    <h1>Convalidation Request Page</h1>
+    {% if student.convalidationGranted %}
+    <p>
+        Your grades, theory={{ student.gradeTheoryLastYear }} and lab={{ student.gradeLabLastYear }},
+        satisfy the requirements for convalidation.
+        You satisfy them.
+    </p>
+    {% else %}
+    <p>
+        Your grades, theory={{ student.gradeTheoryLastYear }} and lab={{ student.gradeLabLastYear }}
+        do not satify the requirements for convalidation.
+    </p>
+    {% endif %}
+</article>
 {% endblock main_block %}

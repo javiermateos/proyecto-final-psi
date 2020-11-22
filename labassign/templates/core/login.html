@@ -22,6 +22,7 @@
         </p>
     </section>
     {% endif %}
+    <span>Please login to access this web site</span>
     <form id="login_form" method="POST" action="{% url 'login' %}">
         {% csrf_token %}
         Username: <input type="text" name="username" value="" size="50" />
