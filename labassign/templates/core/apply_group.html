@@ -6,19 +6,32 @@
 
 {% block main_block %}
 <article>
-    <h1>Apply Group Request Page</h1>
-
+    <h1>Apply Group</h1>
+    {% if selection_not_open %}
+    <p>Group selection is not active<p>
+    {% elif student.labGroup %}
+    {% if group_selected %}
+    <h2>Requested Group</h2>
+    <p>
+        Student <b>{{ student.last_name }},{{ student.first_name }}</b> has been assigned to Laboratory Group
+        {{ student.labGroup }}.
+    </p>
+    {% else %}
+    <span>You are already assigned to group: {{ student.labGroup }}</span>
+    {% endif %}
+    {% else %}
     <form method="POST" action="{% url 'applygroup' %}">
         {% csrf_token %}
         <p>
-            <label for="lab-group-selection">Select your lab group</label>
-            <select name="lab-group" id="lab-group-selection" required>
+            <label for="lab-group-selection">Select the group you want to joint to:</label>
+            <select name="myLabGroup" id="lab-group-selection" required>
                 {% for l in labGroups %}
-                    <option value={{l}}>Grupo: {{ l.id }}</option>                
+                    <option value="{{ l.groupName }}">{{ l.groupName }}</option>
                 {% endfor %}
             </select>
             <input type="submit" name="group-selection" value="submit" />
         </p>
     </form>
+    {% endif %}
 </article>
 {% endblock main_block %}

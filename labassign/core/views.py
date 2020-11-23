@@ -4,6 +4,8 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import F
+from django.utils import timezone
 
 from core.models import (Student, Pair, OtherConstraints, GroupConstraints,
                          LabGroup)
@@ -134,36 +136,64 @@ def applypair_help(request):
 def apply_group(request):
 
     student = Student.objects.filter(id=request.user.id).get()
-    theory_group = student.theoryGroup
-    available_groups = GroupConstraints.objects.filter(
-        theoryGroup=theory_group)
     try:
-        validated_pair = Pair.objects.filter(
-            validated=True).filter(Q(student1=student)
-                                   | Q(student2=student)).get()
+        pair = Pair.objects.filter(Q(student1=student) | Q(student2=student),
+                                   validated=True).get()
     except ObjectDoesNotExist:
-        validated_pair = None
+        pair = None
 
-    valid_lab_groups = []
-    if validated_pair is None:
-        for g in available_groups:
-            if g.labGroup.maxNumberStudents > g.labGroup.counter:
-                valid_lab_groups.append(g.labGroup)
+    valid_lab_groups = None
+    group_already_selected = None
+    group_selected = None
+    selection_not_open = None
+
+    if timezone.now() < OtherConstraints.objects.datetimes(
+            'selectGroupStartDate', 'day').first():
+        selection_not_open = True
+
+    if student.labGroup:
+        group_already_selected = True
     else:
-        for g in available_groups:
-            if g.labGroup.maxNumberStudents > (g.labGroup.counter + 1):
-                valid_lab_groups.append(g.labGroup)
+        if pair:
+            valid_lab_groups = LabGroup.objects.filter(
+                id__in=GroupConstraints.objects.filter(
+                    theoryGroup=student.theoryGroup,
+                    labGroup__in=LabGroup.objects.exclude(
+                        counter__gt=F('maxNumberStudents') -
+                        2)).values('labGroup'))
+        else:
+            valid_lab_groups = LabGroup.objects.filter(
+                id__in=GroupConstraints.objects.filter(
+                    theoryGroup=student.theoryGroup,
+                    labGroup__in=LabGroup.objects.exclude(
+                        counter=F('maxNumberStudents'))).values('labGroup'))
 
     if request.method == "POST":
-        if validated_pair is None:
-            lab_group = LabGroup.objects.filter(
-                id=request.POST.get("lab-group")).get()
-            lab_group.counter += 1
-            student.labGroup = lab_group
+        groupName = request.POST.get("myLabGroup")
+        labgroup = LabGroup.objects.filter(groupName=groupName).get()
+        if labgroup in valid_lab_groups:
+            labgroup.counter += 1
+            student.labGroup = labgroup
             student.save()
-            lab_group.save()
+            if pair:
+                if (pair.student1 == student):
+                    student2 = pair.student2
+                else:
+                    student2 = pair.student1
+                labgroup.counter += 1
+                student2.labGroup = labgroup
+                student2.save()
+            labgroup.save()
+            group_selected = True
 
-    context_dict = dict(zip(['labGroups'], [valid_lab_groups]))
+    context_dict = dict(
+        zip([
+            'student', 'labGroups', 'group_already_selected', 'group_selected',
+            'selection_not_open'
+        ], [
+            student, valid_lab_groups, group_already_selected, group_selected,
+            selection_not_open
+        ]))
 
     return render(request, 'core/apply_group.html', context=context_dict)
 
