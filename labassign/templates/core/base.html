@@ -17,9 +17,9 @@
                         {% if user.is_authenticated %}
                         <li><a href="{% url 'logout' %}">Logout</a></li>
                         <li><a href="{% url 'convalidation' %}">Convalidation</a></li>
-                        <li><a href="{% url 'apply_group' %}">Apply Group</a></li>
-                        <li><a href="{% url 'apply_pair' %}">Apply Pair</a></li>
-                        <li><a href="{% url 'break_pair' %}">Break Pair</a></li>
+                        <li><a href="{% url 'applygroup' %}">Apply Group</a></li>
+                        <li><a href="{% url 'applypair' %}">Apply Pair</a></li>
+                        <li><a href="{% url 'breakpair' %}">Break Pair</a></li>
                         {% endif %}
                     </ul>
                 </div>

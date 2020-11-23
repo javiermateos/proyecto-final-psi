@@ -28,10 +28,10 @@ urlpatterns = [
     path('convalidation_help/',
          views.convalidation_help,
          name='convalidation_help'),
-    path('apply_pair/', views.apply_pair, name='apply_pair'),
+    path('applypair/', views.apply_pair, name='applypair'),
     path('applypair_help/', views.applypair_help, name='applypair_help'),
-    path('apply_group/', views.apply_group, name='apply_group'),
+    path('applygroup/', views.apply_group, name='applygroup'),
     path('applygroup_help/', views.applygroup_help, name='applygroup_help'),
-    path('break_pair/', views.break_pair, name='break_pair'),
+    path('breakpair/', views.breakpair, name='breakpair'),
     path('admin/', admin.site.urls),
 ]

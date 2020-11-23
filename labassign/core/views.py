@@ -173,5 +173,5 @@ def applygroup_help(request):
 
 
 @login_required(login_url="/login/")
-def break_pair(request):
+def breakpair(request):
     return render(request, 'core/break_pair.html')

@@ -20,7 +20,7 @@
     {% elif pair_formed %}
     <span>You are already part of a Pair. Try to break it before request another pair.</span>
     {% else %}
-    <form method="POST" action="{% url 'apply_pair' %}">
+    <form method="POST" action="{% url 'applypair' %}">
         {% csrf_token %}
         <p>
             <label for="id_secondMemberGroup">Select the second member of your pair</label>
