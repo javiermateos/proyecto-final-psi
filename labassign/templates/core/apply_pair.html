@@ -5,4 +5,27 @@
 {% endblock title_block %}
 
 {% block main_block %}
+<article>
+    <h1>Apply Pair Request Page</h1>
+    <p>
+        The pair creation process requires the active participation of both members of the pair.
+        Let us image that María and Pedro want to work together.
+        First Maria needs to log into the system and apply for a pair selecting Pedro as partner.
+        After that Pedro needs to log into the system and apply for a pair selecting María as partner.
+        At this point the pair is validated and will be taken into account in the group select process.
+    </p>
+    <form method="POST" action="{% url 'apply_pair' %}">
+        {% csrf_token %}
+        <p>
+            <label for="id_secondMemberGroup">Select the second member of your pair</label>
+            <select name="secondMemberGroup" id="id_secondMemberGroup" required>
+                <option value="">--Please choose an option--</option>
+                {% for student in students %}
+                <option value="{{ student.id }}">{{ student.last_name }},{{ student.first_name }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" name="student2" value="submit" />
+        </p>
+    </form>
+</article>
 {% endblock main_block %}
