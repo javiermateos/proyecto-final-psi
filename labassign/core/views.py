@@ -83,12 +83,24 @@ def convalidation_help(request):
 @login_required(login_url="/login/")
 def apply_pair(request):
 
-    students = Student.objects.all().exclude(id__in=Pair.objects.exclude(
-        validated=False).only('student1'))
+    user1 = Student.objects.filter(id=request.user.id).get()
 
-    print(students)
+    if request.method == "POST":
+        student2_id = request.POST.get("secondMemberGroup")
+        user2 = Student.objects.filter(id=student2_id).get()
+        pair, created = Pair.objects.get_or_create(student1=user1,
+                                                   student2=user2)
+        if created is False:
+            pair.validated = True
 
-    return render(request, 'core/apply_pair.html')
+    students = Student.objects.all().exclude(
+        Q(id__in=Pair.objects.exclude(validated=False).values('student1'))
+        | Q(id__in=Pair.objects.exclude(validated=False).values('student2'))
+        | Q(id=user1.id))
+
+    context_dict = dict(zip(['students'], [students]))
+
+    return render(request, 'core/apply_pair.html', context=context_dict)
 
 
 def applypair_help(request):
