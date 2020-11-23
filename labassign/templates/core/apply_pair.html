@@ -41,6 +41,8 @@
         <li>Student1: {{ pair.student1 }}</li>
         <li>Student2: {{ pair.student2 }}</li>
     </ul>
+    {% elif pair_requested %}
+    <span>User has already selected a pair, break the pair before creating a new one.</span>
     {% else %}
     <span>The following pair has been <b>requested</b></span>
     <ul>

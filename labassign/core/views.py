@@ -106,15 +106,18 @@ def apply_pair(request):
     if request.method == "POST":
         student2_id = request.POST.get("secondMemberGroup")
         user2 = Student.objects.filter(id=student2_id).get()
-        try:
-            pair = Pair.objects.filter(
-                Q(student1=user1, student2=user2)
-                | Q(student1=user2, student2=user1)).get()
-            pair.validated = True
-            pair.save()
-        except ObjectDoesNotExist:
-            pair = Pair.objects.get_or_create(student1=user1,
-                                              student2=user2)[0]
+        if not Pair.objects.filter(student1=user1).exists():
+            try:
+                pair = Pair.objects.filter(
+                    Q(student1=user1, student2=user2)
+                    | Q(student1=user2, student2=user1)).get()
+                pair.validated = True
+                pair.save()
+            except ObjectDoesNotExist:
+                pair = Pair.objects.get_or_create(student1=user1,
+                                                  student2=user2)[0]
+        else:
+            pair_requested = True
 
     context_dict = dict(
         zip(['students', 'pair', 'pair_requested', 'pair_formed'],
