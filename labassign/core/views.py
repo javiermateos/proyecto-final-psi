@@ -18,7 +18,7 @@ def home(request):
         try:
             pair = Pair.objects.filter(
                 Q(student1=student)
-                | Q(student2=student)).get()
+                | Q(student2=student, validated=True)).get()
         except ObjectDoesNotExist:
             pair = None
         context_dict['pair'] = pair
@@ -84,21 +84,41 @@ def convalidation_help(request):
 def apply_pair(request):
 
     user1 = Student.objects.filter(id=request.user.id).get()
+    students = None
+    pair = None
+    pair_requested = None
+    pair_formed = None
+
+    if request.method == "GET":
+        if Pair.objects.filter(student1=user1).exists():
+            pair_requested = True
+        elif Pair.objects.filter(Q(student1=user1) | Q(student2=user1),
+                                 validated=True).exists():
+            pair_formed = True
+
+        students = Student.objects.all().exclude(
+            Q(id__in=Pair.objects.exclude(
+                validated=False).values('student1'))
+            | Q(id__in=Pair.objects.exclude(
+                validated=False).values('student2'))
+            | Q(id=user1.id))
 
     if request.method == "POST":
         student2_id = request.POST.get("secondMemberGroup")
         user2 = Student.objects.filter(id=student2_id).get()
-        pair, created = Pair.objects.get_or_create(student1=user1,
-                                                   student2=user2)
-        if created is False:
+        try:
+            pair = Pair.objects.filter(
+                Q(student1=user1, student2=user2)
+                | Q(student1=user2, student2=user1)).get()
             pair.validated = True
+            pair.save()
+        except ObjectDoesNotExist:
+            pair = Pair.objects.get_or_create(student1=user1,
+                                              student2=user2)[0]
 
-    students = Student.objects.all().exclude(
-        Q(id__in=Pair.objects.exclude(validated=False).values('student1'))
-        | Q(id__in=Pair.objects.exclude(validated=False).values('student2'))
-        | Q(id=user1.id))
-
-    context_dict = dict(zip(['students'], [students]))
+    context_dict = dict(
+        zip(['students', 'pair', 'pair_requested', 'pair_formed'],
+            [students, pair, pair_requested, pair_formed]))
 
     return render(request, 'core/apply_pair.html', context=context_dict)
 
