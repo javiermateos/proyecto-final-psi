@@ -5,4 +5,20 @@
 {% endblock title_block %}
 
 {% block main_block %}
+<article>
+    <h1>Apply Group Request Page</h1>
+
+    <form method="POST" action="{% url 'apply_group' %}">
+        {% csrf_token %}
+        <p>
+            <label for="lab-group-selection">Select your lab group</label>
+            <select name="lab-group" id="lab-group-selection" required>
+                {% for l in labGroups %}
+                    <option value={{l}}>Grupo: {{ l.id }}</option>                
+                {% endfor %}
+            </select>
+            <input type="submit" name="group-selection" value="submit" />
+        </p>
+    </form>
+</article>
 {% endblock main_block %}

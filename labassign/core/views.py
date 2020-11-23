@@ -5,7 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
 
-from core.models import (Student, Pair, OtherConstraints)
+from core.models import (Student, Pair, OtherConstraints, GroupConstraints,
+                         LabGroup)
 
 
 def home(request):
@@ -97,8 +98,7 @@ def apply_pair(request):
             pair_formed = True
 
         students = Student.objects.all().exclude(
-            Q(id__in=Pair.objects.exclude(
-                validated=False).values('student1'))
+            Q(id__in=Pair.objects.exclude(validated=False).values('student1'))
             | Q(id__in=Pair.objects.exclude(
                 validated=False).values('student2'))
             | Q(id=user1.id))
@@ -129,7 +129,40 @@ def applypair_help(request):
 
 @login_required(login_url="/login/")
 def apply_group(request):
-    return render(request, 'core/apply_group.html')
+
+    student = Student.objects.filter(id=request.user.id).get()
+    theory_group = student.theoryGroup
+    available_groups = GroupConstraints.objects.filter(
+        theoryGroup=theory_group)
+    try:
+        validated_pair = Pair.objects.filter(
+            validated=True).filter(Q(student1=student)
+                                   | Q(student2=student)).get()
+    except ObjectDoesNotExist:
+        validated_pair = None
+
+    valid_lab_groups = []
+    if validated_pair is None:
+        for g in available_groups:
+            if g.labGroup.maxNumberStudents > g.labGroup.counter:
+                valid_lab_groups.append(g.labGroup)
+    else:
+        for g in available_groups:
+            if g.labGroup.maxNumberStudents > (g.labGroup.counter + 1):
+                valid_lab_groups.append(g.labGroup)
+
+    if request.method == "POST":
+        if validated_pair is None:
+            lab_group = LabGroup.objects.filter(
+                id=request.POST.get("lab-group")).get()
+            lab_group.counter += 1
+            student.labGroup = lab_group
+            student.save()
+            lab_group.save()
+
+    context_dict = dict(zip(['labGroups'], [valid_lab_groups]))
+
+    return render(request, 'core/apply_group.html', context=context_dict)
 
 
 def applygroup_help(request):
