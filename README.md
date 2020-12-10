@@ -1,4 +1,4 @@
-# psi_1321_p02_p3
+# psi_1321_p02_p4
 Repositorio para realizar la práctica P2 de la asignatura Proyecto de Sistemas Informáticos.
 
 ## Comandos
@@ -29,13 +29,3 @@ registrados de la aplicación.
   por orden de llegada.
 - Cuando un estudiante se elimine de la aplicación todas las parejas a las que 
   pertenezcan deberán eliminarse.
-
-## Reparto de tareas:
-- 1º y 2º Semana:
-    - [x] Creación de los modelos de datos (3.1). (Javier)
-    - [x] Diagrama Entidad-Relacion del modelo de datos (5.1). (Javier)
-    - [x] Creación del script populate.py y llenado de la base de datos (4.1). (Adrián)
-    - [x] Comprobación del modelo de datos (4.3). (Adrián)
-    - [ ] Pagina de administración (5.1). (Javier)
-    - [ ] Creación del test "test_query.py" (5.2). (Javier)
-    - [ ] Deploy en Heroku de la aplicación. (Adrián)

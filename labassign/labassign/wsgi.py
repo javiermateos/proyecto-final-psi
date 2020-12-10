@@ -13,7 +13,7 @@ from django.core.wsgi import get_wsgi_application
 from dj_static import Cling
 
 os.environ.setdefault(
-    "DJANGO_SETTINGS_MODULE", "tango_with_django_project.settings"
+    "DJANGO_SETTINGS_MODULE", "labassign.settings"
 )
 
 application = Cling(get_wsgi_application())
