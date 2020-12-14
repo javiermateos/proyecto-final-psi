@@ -16,13 +16,14 @@ import dj_database_url
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_DIR = os.path.join(BASE_DIR, "templates")
+STATIC_DIR = os.path.join(BASE_DIR, "static")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = "@r-%e$(_l_e03auy@d-_w4rf4*z7az6f#0=8)qvku8qu(0gkle"
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = "@r-%e$(_l_e03auy@d-_w4rf4*z7az6f#0=8)qvku8qu(0gkle"
+# SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -129,3 +130,7 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, "staticHeroku")
 
 STATIC_URL = "/static/"
+
+STATICFILES_DIRS = [
+    STATIC_DIR,
+]

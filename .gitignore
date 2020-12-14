@@ -131,3 +131,5 @@ dmypy.json
 # Emacs Files
 .dir-locals.el
 /psienv/
+coverage.txt
+labassign/core/migrations/

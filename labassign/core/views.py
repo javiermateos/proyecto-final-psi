@@ -199,12 +199,47 @@ def apply_group(request):
 
 
 def applygroup_help(request):
-    keys = ['selectGroupStartDate', 'currentDate']
-    # TODO: Sustituir los valores por una lista
-    context_dict = dict(zip(keys, [None] * len(keys)))
+    selectGroupStartDate = OtherConstraints.objects.get().selectGroupStartDate
+    currentDate = timezone.now
+
+    context_dict = dict(zip(['selectGroupStartDate', 'currentDate'],
+                            [selectGroupStartDate, currentDate]))
+
     return render(request, 'core/applygroup_help.html', context=context_dict)
+
+
+def breakpair_help(request):
+    render(request, 'core/breakpair_help.html')
 
 
 @login_required(login_url="/login/")
 def breakpair(request):
-    return render(request, 'core/break_pair.html')
+    processed = -1
+    student = Student.objects.filter(id=request.user.id).get()
+
+    pairs = Pair.objects.filter(Q(student1=student) | Q(student2=student))
+
+    if request.method == 'POST':
+        pair_id = request.POST.get('myPair')
+        processed = 2
+        if Pair.objects.filter(id=pair_id).exists():
+            pair = Pair.objects.filter(id=pair_id).get()
+            if pair.validated is False:
+                pair.delete()
+                processed = 0
+            else:
+                if pair.studentBreakRequest is None:
+                    pair.studentBreakRequest = student
+                    pair.save()
+                    processed = 1
+                else:
+                    if student == pair.studentBreakRequest:
+                        processed = 2
+                    else:
+                        pair.delete()
+                        processed = 0
+
+    context_dict = dict(zip(['student', 'pairs', 'processed'],
+                            [student, pairs, processed]))
+
+    return render(request, 'core/break_pair.html', context_dict)

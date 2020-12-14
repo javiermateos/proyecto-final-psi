@@ -1,8 +1,52 @@
 {% extends 'core/base.html' %}
 
 {% block title_block %}
-    Break Pair
+Break Pair
 {% endblock title_block %}
 
 {% block main_block %}
+<article>
+  <h1>Break Pair</h1>
+  {% if processed == 0 %}
+  <p> Your pair has been deleted </p>
+  {% elif proccesed == 1 %}
+  <p> You have requested to break your pair, now your partner must login and
+    request it too for complete the deletion of the pair.
+  </p>
+  {% elif processed == 2 %}
+  <p> Could not process your request </p>
+  {% else %}
+  <section>
+      <h2> How to break (delete) a pair?</h2>
+      <section>
+          <h3> Non validated pairs</h3>
+          <p>
+              If the pair has non been validated
+              just select "break pair" and follow the instructions.
+          </p>
+      </section>
+      <section>
+          <h3> Validated pairs</h3>
+          <p>
+              If the pair has been validated then both partners need to
+              select "break pair" and follow the instructions.
+          </p>
+      </section>
+      <br />
+
+  </section>
+  <form method="POST" action="{% url 'breakpair' %}">
+    {% csrf_token %}
+    <p>
+      <label for="pair-to-delete">Select the pair to be deleted:</label>
+      <select name="myPair" id="pair-break-selection" required>
+        {% for p in pairs %}
+        <option value="{{ p.id }}">{{ p.student1.first_name }}, {{ p.student2.first_name }}</option>
+        {% endfor %}
+      </select>
+      <input type="submit" name="pair-selection" value="submit" />
+    </p>
+  </form>
+  {% endif %}
+</article>
 {% endblock main_block %}

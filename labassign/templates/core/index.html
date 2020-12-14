@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{% load staticfiles %}
 
 {% block title_block %}
     Home
@@ -8,7 +9,7 @@
 <article>
     {% if user.is_authenticated %}
     <h1>Summary page for <b>{{ user.first_name }} {{ user.last_name }}</b></h1>
-    <span>(Your theory group is {{ student.theoryGroup }})</span>
+    <p><span>(Your theory group is {{ student.theoryGroup }})</span></p>
     <section>
         <h2>Convalidation</h2>
         {% if student.convalidationGranted %}
@@ -25,39 +26,40 @@
     <section>
         <h2>Pair Status</h2>
         {% if pair %}
-        <span>You are part of the following pair:</span>
+        <p><span>You are part of the following pair:</span></p>
         <ul>
-            <li>{{ pair.student1 }}</li>
-            <li>{{ pair.student2 }}</li>
+            <li>{{ pair.student1.first_name }} {{ pair.student1.last_name }} </li>
+            <li>{{ pair.student2.first_name }} {{ pair.student2.last_name }} </li>
         </ul>
         {% if pair.validated == False %}
-        <span>{{ pair.student2 }} has NOT validated this pair.</span>
+        <p><b>{{ pair.student2.first_name }} {{ pair.student2.last_name }}
+          has NOT validated this pair.</b></p>
         {% else %}
-        <span>Pair has been validated.</span>
+        <p><span>Pair has been validated.</span></p>
         {% endif %}
         {% else %}
-        <span>You are not part of any pair.</span>
+        <p><span>You are not part of any pair.</span></p>
         {% endif %}
     </section>
     <section>
         <h2>Selected Group</h2>
         {% if student.labGroup %}
-        <span>Your labgroup is: {{ student.labGroup }}</span>
+        <p><span>Your labgroup is: {{ student.labGroup }}</span></p>
         {% else %}
-        <span>You have NOT been selected any Labgroup</span>
+        <p><span>You have NOT been selected any Labgroup</span></p>
         {% endif %}
     {% else %}
     <h1>Service Description</h1>
-    <p>
-        This web site allows EDAT students to select which laboratory group they wish to enroll in.
-        Please follow the steps below.
-        <ol>
+    <div>
+        <p>This web site allows EDAT students to select which laboratory group they wish to enroll in.
+        Please follow the steps below.</p>
+        <ol id="help-list">
             <li>Login (<a href="{% url 'login_help' %}">help</a>)</li>
             <li>Apply for convalidation if appropriate (<a href="{% url 'convalidation_help' %}">help</a>)</li>
             <li>Select partner (<a href="{% url 'applypair_help' %}">help</a>)</li>
             <li>Select group (<a href="{% url 'applygroup_help' %}">help</a>)</li>
         </ol>
-    </p>
+    </div>
     {% endif %}
 </article>
 {% endblock main_block %}

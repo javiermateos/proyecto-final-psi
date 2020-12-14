@@ -1,36 +1,41 @@
 <!DOCTYPE html>
+{% load staticfiles %}
+
 <html class="no-js" lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>Core - {% block title_block %}{% endblock %}</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!-- Place favicon.ico in the root directory -->
-    </head>
-    <body>
-        <header>
-            <nav>
-                <div>
-                    <ul>
-                        <li><a href="{% url 'index' %}">Home</a></li>
-                        <li><a href="{% url 'login' %}">Log-In</a></li>
-                        {% if user.is_authenticated %}
-                        <li><a href="{% url 'logout' %}">Logout</a></li>
-                        <li><a href="{% url 'convalidation' %}">Convalidation</a></li>
-                        <li><a href="{% url 'applygroup' %}">Apply Group</a></li>
-                        <li><a href="{% url 'applypair' %}">Apply Pair</a></li>
-                        <li><a href="{% url 'breakpair' %}">Break Pair</a></li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </nav>
-        </header>
-        <main>
-            {% block main_block %}
-            {% endblock main_block %}
-        </main>
-        <footer>
-            <p> Aplicación programada por Javier Mateos y Adrián Sebastián</p>
-        </footer>
-    </body>
+
+<head>
+  <meta charset="utf-8">
+  <title>Core - {% block title_block %}{% endblock %}</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel='stylesheet' type="text/css" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <ul id="session-links">
+        {% if user.is_authenticated %}
+        <li><a href="{% url 'index' %}">Home</a></li>
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+        <li><a href="{% url 'convalidation' %}">Convalidation</a></li>
+        <li><a href="{% url 'applygroup' %}">Apply Group</a></li>
+        <li><a href="{% url 'applypair' %}">Apply Pair</a></li>
+        <li><a href="{% url 'breakpair' %}">Break Pair</a></li>
+        {% else %}
+        <li><a href="{% url 'index' %}">Home</a></li>
+        <li><a href="{% url 'login' %}">Log-In</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </header>
+  <main>
+    {% block main_block %}
+    {% endblock main_block %}
+  </main>
+  <footer>
+    <p> Aplicación programada por Javier Mateos y Adrián Sebastián</p>
+  </footer>
+</body>
+
 </html>
