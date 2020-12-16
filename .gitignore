@@ -133,3 +133,7 @@ dmypy.json
 /psienv/
 coverage.txt
 labassign/core/migrations/
+UserManual/UserManual.fdb_latexmk
+UserManual/UserManual.aux
+UserManual/UserManual.fls
+UserManual/UserManual.synctex.gz

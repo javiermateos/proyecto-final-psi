@@ -1,0 +1,124 @@
+\documentclass{article}
+
+\usepackage{graphicx}
+\usepackage[spanish]{babel}
+\usepackage[margin=2cm]{geometry}
+
+\setlength{\parindent}{2em}
+\setlength{\parskip}{1em}
+
+\begin{document}
+    
+\begin{titlepage}
+    \begin{center}
+        \includegraphics{img/Logo UAM.png}\par\vspace{1cm}\par\vspace{1cm}
+        {\scshape\LARGE Universidad Autónoma de Madrid \par}
+        \vspace{1cm}
+        {\scshape\Large Prácticas PSI 2020\par}
+        \vspace{1.5cm}
+        {\huge\bfseries Manual de Usuario\par}
+        \vspace{4cm}
+        {\Large\itshape Adrián Sebastián Gil\par}
+        {\Large\itshape Javier Mateos Najarí\par}
+        \vspace{2cm}
+        {\large Grupo 1321\par}
+        \large\today
+    \end{center}
+\end{titlepage} 
+
+\section*{Usuario sin Iniciar sesión}
+
+Al abrir la página sin inciar sesión aparece en la parte superior de la ventana un
+\textit{header} con los enlaces \textit{Home} y \textit{Log In} y un 
+\textit{footer} con el nombre de los autores de la página. Esto será común para todas
+las páginas mientras el usuario siga sin inciar sesión.
+
+\subsection*{Home Page}
+
+En la página home hay una lista de enlaces dónde se describe la funcionalidad
+de la página siguiendo el orden del flujo lógico de uso que se debería hacer en la
+aplicación. Cada enlace lleva a diferentes páginas dónde se describe como realizar 
+cualquier acción dentro de la página.
+
+El primer enlace lleva a la descripción del login dónde se describe los datos necesarios
+para inciar la sesión.
+
+El segundo lleva a la página dónde se describen los requisitos para optar a convalidar las
+prácticas de la asignatura.
+
+El tercero lleva a un enlace donde se explica desde dónde y cómo se crean las parejas y las
+implicaciones que esto tiene.
+
+Y por útimo, está la ventana dónde se describe a partir de cuando, cómo y que implicaciones tiene
+tener pareja a la hora de elegir grupo.
+
+
+\subsection*{Log In Page}
+
+En la página de \textit{login} debes introducir tus credenciales y darle a Submit. Las credenciales
+son como \textit{Username} el NIE y como \textit{Password} el DNI.
+
+
+\section*{Usuario Autenticado}
+
+El usuario, una vez ha iniciado la sesión, en el \textit{header} ahora tiene enlaces para realizar
+las diferentes acciones posibles en la página. Estos enlaces son:
+
+
+\subsection*{Home page}
+
+En la página inicial para los usuarios que han iniciado sesión se da la información del alumno:
+\begin{itemize}
+    \item Nombre y grupo de teoría.
+    \item Estado de convalidación de las prácticas.
+    \item Estado de la pareja.
+    \item Estado del grupo de prácticas 
+\end{itemize}
+
+
+\subsection*{Logout Page}
+
+Cierra automáticamente la sesión y vuelves al estado de usuario sin iniciar sesión explicado previamente.
+
+
+\subsection*{Convalidation Page}
+
+Lleva a la página de convalidación dónde te dice si eres apto o no para la convalidación y la hace en caso
+que sea posible.
+
+
+\subsection*{Apply Group Page}
+
+Muestra un desplegable con las posibilidades de elección para el grupo de prácticas, en caso de que ya hayas
+elegido o se te haya asignado un grupo te muestra el grupo al que perteneces.
+
+Si tienes una pareja el grupo se asigna a ambos miembros de esta.
+
+
+\subsection*{Apply Pair Page}
+
+Dentro de esta página hay una breve descripción sobre como validar una pareja, esto se hace eligiendo ambos miembros
+de la pareja a su compañero desde esta ventana. Una vez ambos alumnos han seleccionado a su compañero la pareja pasa 
+a estar validada.
+
+Para seleccionar compañero hay un menu desplegable donde se muestran todos los compañeros disponibles.
+
+
+\subsection*{Break Pair Page}
+
+En esta sección tambien hay una breve descripción de com romper una pareja previamente creada, esto solo se puede
+hacer cuando todavía no se tiene un grupo de laboratorio asignado.
+
+En caso de no tenerlo hay dos posibilidades, una cuando la pareja esta validada y otra cuando no. Para las parejas
+no validadas basta con que uno de los dos miembros de la pareja soliciten la ruptura de la pareja para que esta se
+lleve a cabo. En el caso de que la pareja este validada ambos miembros deberán solicitar la ruptura de la pareja para
+que esta se complete.
+
+
+\subsection*{Help Page}
+
+Esta página contiene la misma guía de uso que en la página \textit{home} para usuarios sin la sesión iniciada.
+
+
+
+\end{document}
