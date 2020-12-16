@@ -33,5 +33,6 @@ urlpatterns = [
     path('applygroup/', views.apply_group, name='applygroup'),
     path('applygroup_help/', views.applygroup_help, name='applygroup_help'),
     path('breakpair/', views.breakpair, name='breakpair'),
+    path('help/', views.help, name='help'),
     path('admin/', admin.site.urls),
 ]

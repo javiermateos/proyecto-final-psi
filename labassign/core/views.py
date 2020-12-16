@@ -243,3 +243,8 @@ def breakpair(request):
                             [student, pairs, processed]))
 
     return render(request, 'core/break_pair.html', context_dict)
+
+
+@login_required(login_url="/login/")
+def help(request):
+    return render(request, 'core/help.html')
