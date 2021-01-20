@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  db:
+    container_name: db
+    image: postgres
+    volumes: 
+      - pg_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_USER: alumnodb
+      POSTGRES_DB: psi
+      POSTGRES_PASSWORD: alumnodb
+
+  web:
+    container_name: web
+    build:
+      context: ./labassign
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./labassign/:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+volumes:
+  pg_data:

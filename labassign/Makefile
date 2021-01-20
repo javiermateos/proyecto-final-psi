@@ -1,3 +1,7 @@
+##
+# Este archivo Makefile se emplea dentro de la maquina virtual de la
+# escuela.
+##
 export PGDATABASE := psi
 export PGUSER := alumnodb
 export PGPASSWORD := alumnodb

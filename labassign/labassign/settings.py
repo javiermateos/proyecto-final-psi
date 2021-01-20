@@ -22,13 +22,13 @@ STATIC_DIR = os.path.join(BASE_DIR, "static")
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = "@r-%e$(_l_e03auy@d-_w4rf4*z7az6f#0=8)qvku8qu(0gkle"
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = "@r-%e$(_l_e03auy@d-_w4rf4*z7az6f#0=8)qvku8qu(0gkle"
+# SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    u"gentle-everglades-97314.herokuapp.com",
+    # u"gentle-everglades-97314.herokuapp.com",
     u"localhost",
     u"127.0.0.1",
 ]
@@ -78,11 +78,25 @@ WSGI_APPLICATION = "labassign.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+# Esto es para la maquina virtual de clase
+# DATABASES = {
+#     "default":
+#     dj_database_url.config(
+#         default="postgres://alumnodb:alumnodb@localhost:5432/psi")
+# }
+
+# Esto es para docker
 DATABASES = {
-    "default":
-    dj_database_url.config(
-        default="postgres://alumnodb:alumnodb@localhost:5432/psi")
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "psi",
+        "USER": "alumnodb",
+        "PASSWORD": "alumnodb",
+        "HOST": "db",  # If you are in Ubuntu VM change to localhost
+        "PORT": 5432,
+    }
 }
+
 if os.getenv("SQLITE", False):
     DATABASES["default"] = {
         "ENGINE": "django.db.backends.sqlite3",
