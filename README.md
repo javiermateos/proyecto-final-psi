@@ -38,12 +38,10 @@ Para realizar los test:
 make test_datamodel
 make tests_services
 ```
-
 **Importante**: para parar los servicios de docker debes emplear el comando:
 ```sh
 make stop
 ```
-
 ## Requisitos Funcionales:
 
 - Existen dos tipos de usuarios en la aplicación: usuarios registrados y usuarios

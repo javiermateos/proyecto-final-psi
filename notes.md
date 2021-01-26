@@ -3,7 +3,7 @@
 Este archivo contiene los comandos necesarios así como las anotaciones
 para realizar la práctica y el examen de enero.
 
-## Django 
+## Django
 
 1. Creación del proyecto y la aplicación.
 ```shell
@@ -86,13 +86,13 @@ sudo systemctl status postgresql.service
 sudo systemctl start postgresql.service
 ```
 Nota: Si no quieres iniciar postgresql cada vez que quieras conectarte debes
-habilitarlo con el comando: 
+habilitarlo con el comando:
 ```sh
 sudo systemctl enable postgresql.service
 ```
 2. Creacion del usuario
 ```sh
-sudo -iu postgres 
+sudo -iu postgres
 createuser --interactive # Crear usuario alumnodb:alumnodb
 ```
 3. Creacion de la base de datos.
@@ -124,12 +124,15 @@ Para ello es necesario situarse dentro de la carpeta del proyecto django. En est
 sería la carpeta labassign (la primera).
 ```sh
 git init
-git add .
+git add -A
 git commit -m "Repositorio local para heroku"
-make config_heroku #Recuerda modificar el nombre de la app de heroku en el makefile
+heroku login
+heroku create
+heroku create <nombreApp>
+#make config_heroku #Recuerda modificar el nombre de la app de heroku en el makefile
 # Añadir a la variable ALLOWED HOST la direccion de heroku devuelta
 heroku config:set SECRET_KEY=<valor>
-make push_heroku
+git push heroku master
 ```
 ```python
 ALLOWED_HOSTS = [
@@ -138,7 +141,27 @@ ALLOWED_HOSTS = [
     u"127.0.0.1",
 ]
 ```
+Ademas, antes de poder hacer nada en la aplicacion
+de heroku debemos ejecutar:
+```sh
+heroku run bash
+python manage.py makemigrations <nombreapp>
+python manage.py migrate
+exit
+#heroku run python manage.py shell -c "from core.models import Student; Student.objects.create_superuser('alumnodb', 'a@a.es', 'alumnodb')"
+heroku run python manage.py createsuperuser
+heroku run python manage.py populate all <restodeargumentosnecesarios>
+```
 3. Pasos para realizar los test en heroku
 ```sh
 make test_heroku
 ```
+NOTAS: Parace ser que ahora mismo para que se pueda subir la aplicacion
+a heroku la version de runtime de python debe ser 3.6.12 si no no se podra
+subir. Además, es necesario que si la carpeta **static** está vacia crees
+un archivo vacio dentro por que si no git no lo aniadira al repositorio y dara
+un error heroku. Otra opcion es desabilitar los estaticos con:
+```sh
+heroku config:set DISABLE_COLLECTSTATIC=1
+```
+antes de hacer *git push heroku master*.
